@@ -12,12 +12,16 @@ import { CATEGORIES } from '../lib/types'
 
 const LA_CENTER: [number, number] = [34.0522, -118.2437]
 
+// Matches the chip and tile palette so the colour coding is learned once and
+// holds everywhere. Colour never carries the meaning on its own: the legend
+// below the map spells out every category, as do the popups.
 const PIN_COLORS: Record<string, string> = {
-  food: '#7a4a00',
-  shelter: '#1f4d7a',
-  documents: '#4a2f7a',
-  employment: '#14622f',
-  crisis: '#8a1f3d',
+  'food-and-meals': '#7a4a00',
+  'emergency-housing': '#1f4d7a',
+  'docs-and-expungement': '#4a2f7a',
+  'fair-chance-jobs': '#14622f',
+  'health-and-support': '#8a1f3d',
+  clothing: '#0f5c66',
 }
 
 function pinIcon(category: string) {

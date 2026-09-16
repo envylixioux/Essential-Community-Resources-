@@ -24,11 +24,12 @@
   --alert: #7a1f1f;
   --focus: #0b63c5;
 
-  --cat-food: #7a4a00;
-  --cat-shelter: #1f4d7a;
-  --cat-documents: #4a2f7a;
-  --cat-employment: #14622f;
-  --cat-crisis: #8a1f3d;
+  --cat-food-and-meals: #7a4a00;
+  --cat-emergency-housing: #1f4d7a;
+  --cat-docs-and-expungement: #4a2f7a;
+  --cat-fair-chance-jobs: #14622f;
+  --cat-health-and-support: #8a1f3d;
+  --cat-clothing: #0f5c66;
 
   --tap: 44px;
   --radius: 10px;
@@ -270,11 +271,12 @@ a {
   color: var(--brand-ink);
 }
 
-.chip-food { background: var(--cat-food); }
-.chip-shelter { background: var(--cat-shelter); }
-.chip-documents { background: var(--cat-documents); }
-.chip-employment { background: var(--cat-employment); }
-.chip-crisis { background: var(--cat-crisis); }
+.chip-food-and-meals { background: var(--cat-food-and-meals); }
+.chip-emergency-housing { background: var(--cat-emergency-housing); }
+.chip-docs-and-expungement { background: var(--cat-docs-and-expungement); }
+.chip-fair-chance-jobs { background: var(--cat-fair-chance-jobs); }
+.chip-health-and-support { background: var(--cat-health-and-support); }
+.chip-clothing { background: var(--cat-clothing); }
 
 .status {
   display: inline-flex;
@@ -556,11 +558,12 @@ a {
     --unknown: #e6cf7a;
     --alert: #ff9a9a;
     --focus: #8cc2f0;
-    --cat-food: #d8a15a;
-    --cat-shelter: #8cc2f0;
-    --cat-documents: #c0a6f0;
-    --cat-employment: #6ede97;
-    --cat-crisis: #f5a3bb;
+    --cat-food-and-meals: #d8a15a;
+    --cat-emergency-housing: #8cc2f0;
+    --cat-docs-and-expungement: #c0a6f0;
+    --cat-fair-chance-jobs: #6ede97;
+    --cat-health-and-support: #f5a3bb;
+    --cat-clothing: #6fd0dd;
   }
 
   .chip {
@@ -571,4 +574,354 @@ a {
   .nav a[aria-current='page'] {
     color: var(--brand-ink);
   }
+}
+
+
+/* ---- Hotlines strip ----------------------------------------------------- */
+/* Immediate danger, above everything, never behind a filter or a scroll. */
+
+.hotlines {
+  margin: 4px 0 16px;
+}
+
+.hotlines-title {
+  font-size: 1rem;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.hotlines-list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 0 4px;
+  margin: 0;
+  list-style: none;
+}
+
+.hotline-chip {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--tap);
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  border: 2px solid var(--alert);
+  background: var(--page);
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.hotline-number {
+  font-weight: 700;
+  color: var(--alert);
+}
+
+.hotline-label {
+  font-size: 1rem;
+  color: var(--ink-soft);
+}
+
+/* ---- Location indicator ------------------------------------------------- */
+
+.location-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.location-name {
+  font-weight: 600;
+}
+
+.location-change {
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 8px 12px;
+  background: transparent;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--brand);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---- Freshness dot ------------------------------------------------------ */
+/* One dot. Transparency, not a dashboard. */
+
+.freshness {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.freshness-dot {
+  min-width: var(--tap);
+  min-height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.freshness-mark {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: block;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.freshness-green .freshness-mark { background: var(--open); }
+.freshness-amber .freshness-mark { background: var(--unknown); }
+.freshness-red .freshness-mark { background: var(--closed); }
+.freshness-none .freshness-mark { background: var(--ink-soft); }
+
+.freshness-tooltip {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 80vw;
+  z-index: 30;
+  background: var(--ink);
+  color: var(--page);
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* ---- Quick Finder tiles -------------------------------------------------- */
+
+.section-heading {
+  font-size: 1.0625rem;
+  margin: 16px 0 8px;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Very narrow screens get two columns rather than three cramped ones. */
+@media (max-width: 359px) {
+  .tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tile {
+  width: 100%;
+  min-height: 100px;
+  height: 100%;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  cursor: pointer;
+  /* Light tint of the category colour, with that colour for the text. The
+     label always states the category; the tint only reinforces it. */
+  background: color-mix(in srgb, var(--tile-color) 16%, var(--page));
+  color: var(--tile-ink, var(--ink));
+}
+
+.tile[aria-pressed='true'] {
+  border-color: var(--tile-color);
+}
+
+.tile-emoji {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.tile-label {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  /* Long labels wrap inside the tile instead of pushing the grid wider. */
+  overflow-wrap: anywhere;
+}
+
+.tile-emergency-housing { --tile-color: var(--cat-emergency-housing); --tile-ink: var(--cat-emergency-housing); }
+.tile-fair-chance-jobs { --tile-color: var(--cat-fair-chance-jobs); --tile-ink: var(--cat-fair-chance-jobs); }
+.tile-docs-and-expungement { --tile-color: var(--cat-docs-and-expungement); --tile-ink: var(--cat-docs-and-expungement); }
+.tile-food-and-meals { --tile-color: var(--cat-food-and-meals); --tile-ink: var(--cat-food-and-meals); }
+.tile-health-and-support { --tile-color: var(--cat-health-and-support); --tile-ink: var(--cat-health-and-support); }
+.tile-clothing { --tile-color: var(--cat-clothing); --tile-ink: var(--cat-clothing); }
+
+@media (prefers-color-scheme: dark) {
+  .tile {
+    background: color-mix(in srgb, var(--tile-color) 22%, var(--page));
+    color: var(--ink);
+  }
+  .tile-emergency-housing,
+  .tile-fair-chance-jobs,
+  .tile-docs-and-expungement,
+  .tile-food-and-meals,
+  .tile-health-and-support,
+  .tile-clothing {
+    --tile-ink: var(--ink);
+  }
+}
+
+/* ---- Secondary filter row ------------------------------------------------ */
+
+.pills-secondary {
+  padding-top: 0;
+}
+
+.pill-small {
+  padding: 6px 12px;
+}
+
+/* ---- Sub-type chips ------------------------------------------------------ */
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.tag-block {
+  margin: 12px 0;
+}
+
+.tag-help {
+  margin: 6px 0 0;
+  color: var(--ink-soft);
+}
+
+.cross-link {
+  margin: 16px 0;
+}
+
+.cross-link a {
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+}
+
+/* ---- Empty state --------------------------------------------------------- */
+/* Never a dead end. Acknowledge the gap, then hand over three real doors. */
+
+.empty-state {
+  margin: 16px 0;
+}
+
+.empty-lead {
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.empty-actions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.empty-action {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  border-radius: var(--radius);
+  border: 2px solid var(--brand);
+  background: var(--page);
+  color: var(--brand);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.empty-action-title {
+  font-weight: 700;
+}
+
+.empty-action-sub {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+/* ---- Modal --------------------------------------------------------------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+
+@media (min-width: 480px) {
+  .modal-backdrop {
+    align-items: center;
+  }
+}
+
+.modal {
+  background: var(--page);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 16px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal h2 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+}
+
+.modal .btn {
+  width: 100%;
+  flex: none;
+  margin-top: 8px;
 }

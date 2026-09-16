@@ -51,13 +51,124 @@ const STRINGS: Dictionary = {
     es: 'Recursos esenciales en el condado de Los Ángeles.',
   },
   searchLabel: { en: 'Search resources', es: 'Buscar recursos' },
-  searchPlaceholder: { en: 'Search food, shelter, ID help…', es: 'Buscar comida, refugio, ayuda con identificación…' },
+  searchPlaceholder: {
+    en: 'Search food, housing, ID help…',
+    es: 'Buscar comida, vivienda, ayuda con identificación…',
+  },
   all: { en: 'All', es: 'Todos' },
-  food: { en: 'Food', es: 'Comida' },
-  shelter: { en: 'Shelter', es: 'Refugio' },
-  documents: { en: 'ID & Documents', es: 'Identificación y documentos' },
-  employment: { en: 'Employment', es: 'Empleo' },
-  crisis: { en: 'Crisis', es: 'Crisis' },
+
+  // Category labels. These are the names a person would use out loud, which
+  // is why they are longer than a filing system would choose.
+  'emergency-housing': { en: 'Emergency Housing', es: 'Vivienda de emergencia' },
+  'fair-chance-jobs': { en: 'Fair Chance Jobs', es: 'Empleo con segunda oportunidad' },
+  'docs-and-expungement': { en: 'Docs & Expungement', es: 'Documentos y expunción' },
+  'food-and-meals': { en: 'Food & Meals', es: 'Comida y comidas' },
+  'health-and-support': { en: 'Health & Support', es: 'Salud y apoyo' },
+  clothing: { en: 'Clothing', es: 'Ropa' },
+
+  // Short forms for the Quick Finder tiles, where space is tight.
+  'tile.emergency-housing': { en: 'Emergency Housing', es: 'Vivienda de emergencia' },
+  'tile.fair-chance-jobs': { en: 'Fair Chance Jobs', es: 'Empleo segunda oport.' },
+  'tile.docs-and-expungement': { en: 'Docs & Expungement', es: 'Documentos y expunción' },
+  'tile.food-and-meals': { en: 'Food & Meals', es: 'Comida y comidas' },
+  'tile.health-and-support': { en: 'Health & Support', es: 'Salud y apoyo' },
+  'tile.clothing': { en: 'Clothing', es: 'Ropa' },
+
+  quickFinder: { en: 'What do you need?', es: '¿Qué necesita?' },
+
+  // Fair chance types. A person deserves to know which front door they are
+  // calling before they call it.
+  'fairChance.signatory': { en: 'Fair chance employer', es: 'Empleador de segunda oportunidad' },
+  'fairChance.placement-program': { en: 'Placement program', es: 'Programa de colocación' },
+  'fairChance.staffing-agency': { en: 'Staffing agency', es: 'Agencia de empleo' },
+  'fairChance.workforce-center': { en: 'Workforce center', es: 'Centro de empleo' },
+  'fairChance.signatory.help': {
+    en: 'This employer has signed a public fair chance hiring pledge.',
+    es: 'Este empleador firmó un compromiso público de contratación de segunda oportunidad.',
+  },
+  'fairChance.placement-program.help': {
+    en: 'A program that places justice-impacted workers. There is an intake process.',
+    es: 'Un programa que coloca a personas con antecedentes. Tiene un proceso de admisión.',
+  },
+  'fairChance.staffing-agency.help': {
+    en: 'A staffing agency that specialises in fair chance hiring.',
+    es: 'Una agencia de empleo especializada en contratación de segunda oportunidad.',
+  },
+  'fairChance.workforce-center.help': {
+    en: 'A public job center. Open to everyone, with reentry staff on site.',
+    es: 'Un centro de empleo público. Abierto a todos, con personal de reingreso.',
+  },
+
+  'service.id-replacement': { en: 'ID replacement', es: 'Reemplazo de identificación' },
+  'service.expungement': { en: 'Expungement', es: 'Expunción' },
+  'service.both': { en: 'ID & expungement', es: 'Identificación y expunción' },
+
+  alsoNeedExpungement: { en: 'You may also need: Expungement', es: 'También puede necesitar: Expunción' },
+  alsoNeedId: { en: 'You may also need: ID replacement', es: 'También puede necesitar: Reemplazo de identificación' },
+  alsoNeedWhy: {
+    en: 'Clearing a record and replacing an ID often go together.',
+    es: 'Limpiar un antecedente y reemplazar una identificación suelen ir juntos.',
+  },
+
+  // Location indicator
+  searchArea: { en: 'Searching', es: 'Buscando en' },
+  laCounty: { en: 'Los Angeles County', es: 'Condado de Los Ángeles' },
+  change: { en: 'Change', es: 'Cambiar' },
+  changeArea: { en: 'Change search area', es: 'Cambiar área de búsqueda' },
+  autoDetect: { en: 'Auto-detect my location', es: 'Detectar mi ubicación' },
+  enterZip: { en: 'Enter ZIP code', es: 'Ingresar código postal' },
+  zipPlaceholder: { en: '5-digit ZIP', es: 'Código de 5 dígitos' },
+  useZip: { en: 'Use this ZIP', es: 'Usar este código' },
+  useWholeCounty: { en: 'Search the whole county', es: 'Buscar en todo el condado' },
+  cancel: { en: 'Cancel', es: 'Cancelar' },
+  detecting: { en: 'Detecting…', es: 'Detectando…' },
+  outsideCoverage: {
+    en: 'That location is outside our coverage area. We serve Los Angeles County.',
+    es: 'Esa ubicación está fuera de nuestra área de cobertura. Servimos al condado de Los Ángeles.',
+  },
+  zipInvalid: { en: 'Enter five digits.', es: 'Ingrese cinco dígitos.' },
+  geoUnavailable: {
+    en: 'Could not read your location. Enter a ZIP code instead.',
+    es: 'No se pudo leer su ubicación. Ingrese un código postal.',
+  },
+  locationOptIn: {
+    en: 'We only check your location when you ask. Nothing is stored or sent anywhere.',
+    es: 'Solo revisamos su ubicación cuando usted lo pide. Nada se guarda ni se envía.',
+  },
+
+  // Freshness dot
+  freshnessGreen: { en: 'Data is current', es: 'Datos actualizados' },
+  freshnessAmber: { en: 'Some data needs re-checking', es: 'Algunos datos necesitan revisión' },
+  freshnessRed: { en: 'Data needs re-checking', es: 'Los datos necesitan revisión' },
+  freshnessDetail: {
+    en: '{percent}% of local resources verified in the last 90 days. Most recent verification: {date}.',
+    es: '{percent}% de los recursos locales verificados en los últimos 90 días. Verificación más reciente: {date}.',
+  },
+  freshnessNone: {
+    en: 'No verification dates recorded yet.',
+    es: 'Aún no hay fechas de verificación registradas.',
+  },
+
+  // Empty state
+  emptyLead: {
+    en: "We don't have verified resources for this yet. Here's what you can do.",
+    es: 'Aún no tenemos recursos verificados para esto. Esto es lo que puede hacer.',
+  },
+  call211: { en: 'Call 211', es: 'Llamar al 211' },
+  call211Sub: { en: 'LA County help, 24 hours', es: 'Ayuda del condado, 24 horas' },
+  tryWiderArea: { en: 'Try a wider area', es: 'Buscar en un área más amplia' },
+  tryWiderAreaSub: { en: 'Search all of Los Angeles County', es: 'Buscar en todo el condado' },
+  suggestFromEmpty: { en: 'Suggest a resource', es: 'Sugerir un recurso' },
+  suggestFromEmptySub: {
+    en: 'Know somewhere that helps? Tell us.',
+    es: '¿Conoce un lugar que ayude? Cuéntenos.',
+  },
+
+  // Hotlines strip
+  hotlinesLabel: { en: 'Need help right now', es: 'Necesita ayuda ahora' },
+  hotline211: { en: '211 · LA County help', es: '211 · Ayuda del condado' },
+  hotline988: { en: '988 · Suicide & crisis', es: '988 · Suicidio y crisis' },
+  hotlineDv: { en: 'DV hotline · 24 hours', es: 'Línea de violencia doméstica · 24 horas' },
   openNow: { en: 'Open now', es: 'Abierto ahora' },
   closed: { en: 'Closed', es: 'Cerrado' },
   hoursUnknown: { en: 'Hours not confirmed', es: 'Horario sin confirmar' },
@@ -161,10 +272,7 @@ export function t(key: keyof typeof STRINGS | string, locale: Locale, vars?: Rec
   return value
 }
 
-export const CATEGORY_LABEL_KEYS = {
-  food: 'food',
-  shelter: 'shelter',
-  documents: 'documents',
-  employment: 'employment',
-  crisis: 'crisis',
-} as const
+/** A category's own name is its translation key. */
+export function categoryLabel(category: string, locale: Locale): string {
+  return t(category, locale)
+}

@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useApp } from '../lib/AppContext'
+import { resolveCategory } from '../lib/categories'
 import { t } from '../lib/i18n'
 import { submitSuggestion } from '../lib/resources'
 import { CATEGORIES, type AccessType, type Category } from '../lib/types'
@@ -24,9 +26,16 @@ type Status = 'idle' | 'sending' | 'sent' | 'failed'
 
 export default function Suggest() {
   const { locale } = useApp()
+  const [params] = useSearchParams()
   const [status, setStatus] = useState<Status>('idle')
   const [name, setName] = useState('')
-  const [category, setCategory] = useState<Category>('food')
+
+  // Arriving from an empty filter carries that category across, so the reader
+  // is not asked to pick again what they just picked. resolveCategory also
+  // accepts the pre-rename names for one release cycle.
+  const [category, setCategory] = useState<Category>(
+    () => resolveCategory(params.get('category') ?? '') ?? 'food-and-meals',
+  )
   const [accessType, setAccessType] = useState<AccessType>('walk-in')
   const [description, setDescription] = useState('')
   const [address, setAddress] = useState('')

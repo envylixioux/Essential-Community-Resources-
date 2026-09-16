@@ -49,6 +49,120 @@ against it right now.
 | `npm run typecheck` | Types only |
 | `npm run qr` | Regenerate the flyer QR code into `public/` |
 
+## Categories
+
+Six categories, named for what a person would actually say they need rather
+than how a directory would file it.
+
+| Category | Spanish |
+| --- | --- |
+| `emergency-housing` | Vivienda de emergencia |
+| `fair-chance-jobs` | Empleo con segunda oportunidad |
+| `docs-and-expungement` | Documentos y expunción |
+| `food-and-meals` | Comida y comidas |
+| `health-and-support` | Salud y apoyo |
+| `clothing` | Ropa |
+
+These replaced `shelter`, `employment`, `documents`, `food`, and `crisis`.
+`resolveCategory()` in `src/lib/categories.ts` still accepts the old names for
+one release cycle and logs a console warning naming the replacement. When the
+warnings stop, delete the legacy half of that file, the `LegacyCategory` type,
+and run step 4 of `supabase/migrations/001_category_rename.sql`.
+
+`health-and-support` is broader than the `crisis` category it replaced. Free
+clinics, counseling, and substance use support now sit in it alongside crisis
+lines. That is only safe because the hotlines strip at the top of the home
+screen carries the immediate-danger case and is never behind a filter.
+
+### Sub-type tags
+
+Two categories require a tag, and a resource missing its tag does not render
+anywhere — same rule as `verified`, enforced in the app, in the data layer,
+and in the Postgres read policy.
+
+`fair-chance-jobs` requires `fair_chance_type`: `signatory`,
+`placement-program`, `staffing-agency`, or `workforce-center`. A workforce
+center serves everyone who walks in; a placement program has an intake and a
+waiting list. Those are different phone calls and the chip says which.
+
+**Never list an employer as fair chance without one of those tags.** The claim
+is about how someone will be treated when they disclose a record. Publishing
+it untagged means an applicant walks in on our say-so and gets rejected
+anyway.
+
+`docs-and-expungement` requires `service_provided`: `id-replacement`,
+`expungement`, or `both`. Filtering that category shows a secondary chip row
+for the two halves, multi-select with OR logic. Detail pages cross-link the
+other half, because clearing a record and replacing an ID usually go together
+and finding that out on a second trip wastes a day.
+
+## Home screen
+
+Four things stack above the resource list, in this order:
+
+1. **Hotlines strip.** 211, 988, and the domestic violence hotline. Never
+   behind a filter, a tile, or a scroll. Labels say what each number actually
+   is: 211 is Los Angeles County social services, part of the United Way's
+   national 211 network, and is not a reentry hotline.
+2. **Location indicator.** The current search area with a Change link, and the
+   freshness dot.
+3. **Quick Finder tiles.** Six tiles, 3x2 at phone width and 2x3 below 360px.
+   A second door into the same data for someone who does not know the app's
+   vocabulary yet.
+4. **Search box and filter pills.** Neither the tiles nor the pills hide
+   behind a menu. Browsing and knowing-what-you-want are different jobs.
+
+### Location
+
+Opt-in every single time. Nothing asks for geolocation on load or in the
+background. Auto-detect and ZIP entry both live behind the Change button, and
+the only thing stored is the chosen area, in the reader's own browser under
+`searchArea`.
+
+A location outside Los Angeles County is refused with a plain message rather
+than quietly recentred on LA. Saying "here are your local resources" to
+someone 400 miles away is the misleading answer and somebody acts on it.
+
+The ZIP ranges in `src/lib/searchArea.ts` **need verification against the
+county's published list before launch.** A wrong entry tells a real person we
+do not serve them when we do.
+
+Narrowing by ZIP never hides a resource whose location the gate withholds. A
+domestic violence shelter a person cannot find is the same as no shelter.
+
+### Empty state
+
+When a filter returns nothing, the app offers three concrete actions: call
+211, widen the search area, or suggest the resource we are missing, with the
+filtered category carried into the form. It never leaves someone at a dead
+end. An empty state that apologises and blames the connection hands the
+reader their own problem back.
+
+### Freshness dot
+
+One dot beside the area name. Green at 80% or more of local resources
+verified within 90 days, amber from 50%, red below that. Tap it for the
+percentage and the most recent verification date.
+
+This is transparency, not gamification, and the dot is the entire feature.
+If it ever grows into a data quality dashboard, it has stopped being useful
+to the reader.
+
+## Deliberately not built
+
+These were considered and rejected. Do not add them.
+
+- **A chatbot as a primary interface.** Every resource here is human-verified.
+  An AI answering freehand can invent an address, misstate hours, or describe
+  a program that does not exist, which undoes the verification work entirely.
+  The only acceptable future scope is a scoped router that suggests filters
+  and never states a fact, an address, a phone number, or an hour.
+- **Sidebar navigation on mobile.** The home-screen-with-filters pattern is
+  correct for mobile-first. A sidebar is fine in a future desktop layout but
+  must never appear at phone widths.
+- **Catchier hotline labels.** Wrong labels erode trust with the people most
+  likely to notice the error.
+
 ## The rules this code enforces
 
 These are not style preferences. Read them before changing anything.
@@ -144,14 +258,18 @@ strings and the fallback helpers.
 
 ```
 src/lib/canShowLocation.ts   the location gate — read this first
+src/lib/categories.ts        category compatibility layer and tag rules
 src/lib/hours.ts             open/closed in Los Angeles time
+src/lib/searchArea.ts        the reader's own location; never a resource's
+src/lib/freshness.ts         the one dot
 src/lib/i18n.ts              UI strings and Spanish fallback
-src/lib/resources.ts         data access; filters unverified, redacts gated
+src/lib/resources.ts         data access; withholds unverified and untagged
 src/components/LocationBlock.tsx   the only component that renders a location
 src/screens/                 Home, ResourceDetail, MapScreen, Suggest, KnowYourRights
 know-your-rights.md          rights page content (English)
 know-your-rights.es.md       rights page content (Spanish)
 supabase/schema.sql          reference DDL and RLS policies
+supabase/migrations/         the category rename; read the header before running
 firestore-schema.js          annotated data model — why each field exists
 ```
 
@@ -188,7 +306,10 @@ a real phone and confirm by hand:
 
 - Search a confidential resource by name. There is no address anywhere on its
   page and no Directions button.
-- Its pin is absent from the map.
+- Its pin is absent from the map, and narrowing the search to a ZIP does not
+  hide it from the list.
+- A `fair-chance-jobs` row with no `fair_chance_type` does not appear, and is
+  not reachable by typing its URL directly.
 - The language toggle changes every screen, and a resource with no Spanish
   name still shows its English name rather than a blank.
 - The whole app is usable one-handed at 320px.

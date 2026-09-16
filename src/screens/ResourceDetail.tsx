@@ -4,6 +4,7 @@ import { CategoryChip } from '../components/CategoryChip'
 import { LocationBlock } from '../components/LocationBlock'
 import { OpenStatusBadge } from '../components/OpenStatusBadge'
 import { ResourceListSkeleton } from '../components/Skeletons'
+import { FairChanceChip, ServiceChip } from '../components/TagChip'
 import { useApp } from '../lib/AppContext'
 import { formatForDisplay, laNow, WEEKDAYS } from '../lib/hours'
 import {
@@ -63,6 +64,30 @@ function HoursTable({ resource, locale }: { resource: Resource; locale: Locale }
   )
 }
 
+/**
+ * Points someone doing one half of docs-and-expungement at the other half.
+ * Nothing shows for an organisation already tagged 'both' — they can do it
+ * all at one intake, so there is nowhere else to send them.
+ */
+function CrossLink({ resource, locale }: { resource: Resource; locale: Locale }) {
+  if (resource.category !== 'docs-and-expungement') return null
+  if (resource.service_provided !== 'id-replacement' && resource.service_provided !== 'expungement') {
+    return null
+  }
+
+  const needsExpungement = resource.service_provided === 'id-replacement'
+  const target = needsExpungement ? 'expungement' : 'id-replacement'
+
+  return (
+    <aside className="notice cross-link">
+      <Link to={`/?category=docs-and-expungement&service=${target}`}>
+        {t(needsExpungement ? 'alsoNeedExpungement' : 'alsoNeedId', locale)}
+      </Link>
+      <p className="field-hint">{t('alsoNeedWhy', locale)}</p>
+    </aside>
+  )
+}
+
 export default function ResourceDetail() {
   const { id } = useParams<{ id: string }>()
   const { locale, resources, loading } = useApp()
@@ -117,10 +142,25 @@ export default function ResourceDetail() {
       <h2>{resourceName(resource, locale)}</h2>
       <div className="card-meta">
         <CategoryChip category={resource.category} locale={locale} />
+        {resource.service_provided ? (
+          <ServiceChip service={resource.service_provided} locale={locale} />
+        ) : null}
         <OpenStatusBadge resource={resource} locale={locale} />
       </div>
 
+      {/* A workforce center serves everyone; a placement program has an
+          intake and a waiting list. Spell out which this is. */}
+      {resource.fair_chance_type ? (
+        <div className="tag-block">
+          <FairChanceChip type={resource.fair_chance_type} locale={locale} withHelp />
+        </div>
+      ) : null}
+
       <p>{resourceDescription(resource, locale)}</p>
+
+      {/* Clearing a record and replacing an ID usually go together, and
+          finding that out on the second visit wastes a trip. */}
+      <CrossLink resource={resource} locale={locale} />
 
       {/* Every address, map link and Directions button in the app comes from
           this component, which gates on canShowLocation. */}

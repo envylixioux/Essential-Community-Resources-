@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { loadResources } from './resources'
+import { loadSearchArea, saveSearchArea, type SearchArea } from './searchArea'
 import type { Locale } from './i18n'
 import type { Resource } from './types'
 
@@ -19,6 +20,9 @@ interface AppState {
   loading: boolean
   error: string | null
   reload: () => void
+  /** Where the reader is searching. Opt-in, remembered in their browser. */
+  area: SearchArea
+  setArea: (area: SearchArea) => void
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -42,6 +46,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [attempt, setAttempt] = useState(0)
+  const [area, setAreaState] = useState<SearchArea>(loadSearchArea)
+
+  const setArea = useCallback((next: SearchArea) => {
+    setAreaState(next)
+    saveSearchArea(next)
+  }, [])
 
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next)
@@ -84,8 +94,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const reload = useCallback(() => setAttempt((n) => n + 1), [])
 
   const value = useMemo<AppState>(
-    () => ({ locale, setLocale, resources, isSample, loading, error, reload }),
-    [locale, setLocale, resources, isSample, loading, error, reload],
+    () => ({ locale, setLocale, resources, isSample, loading, error, reload, area, setArea }),
+    [locale, setLocale, resources, isSample, loading, error, reload, area, setArea],
   )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

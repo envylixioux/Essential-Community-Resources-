@@ -9,9 +9,30 @@
 -- repo root. That file predates the move to Postgres and uses camelCase; the
 -- explanations are still accurate.
 
+-- Named for what a person would say they need, not how a directory would
+-- file it. See supabase/migrations/001_category_rename.sql for the move from
+-- the previous names and the compatibility window.
 create type resource_category as enum (
-  'food', 'shelter', 'documents', 'employment', 'crisis'
+  'emergency-housing',
+  'fair-chance-jobs',
+  'docs-and-expungement',
+  'food-and-meals',
+  'health-and-support',
+  'clothing'
 );
+
+-- What kind of fair-chance resource this is. A workforce center serves
+-- everyone walking in; a placement program has an intake and a waiting list.
+-- Different phone calls, and worth knowing which before making one.
+create type fair_chance_type as enum (
+  'signatory',
+  'placement-program',
+  'staffing-agency',
+  'workforce-center'
+);
+
+-- Which half of docs-and-expungement a resource covers.
+create type service_provided as enum ('id-replacement', 'expungement', 'both');
 
 create type resource_access_type as enum (
   'walk-in', 'appointment', 'hotline-only', 'online', 'application'
@@ -58,6 +79,10 @@ create table resources (
   eligibility_es text,
   languages text[],
 
+  -- Required for their own categories; see the check constraints below.
+  fair_chance_type fair_chance_type,
+  service_provided service_provided,
+
   -- Nothing renders until a person has called and confirmed the details.
   verified boolean not null default false,
   last_verified_at date,
@@ -76,6 +101,16 @@ create table resources (
   -- A confidential resource is reachable by phone or it is not reachable.
   constraint confidential_has_a_number check (
     not confidential_location or (hotline is not null or phone is not null)
+  ),
+
+  -- A fair-chance listing with no type does not render anywhere. Naming an
+  -- employer as "fair chance" without knowing what kind sends an applicant to
+  -- be rejected over their record on our say-so.
+  constraint fair_chance_needs_type check (
+    category <> 'fair-chance-jobs' or fair_chance_type is not null
+  ),
+  constraint docs_need_service check (
+    category <> 'docs-and-expungement' or service_provided is not null
   )
 );
 
@@ -126,11 +161,17 @@ alter table resources enable row level security;
 alter table reviews enable row level security;
 alter table submissions enable row level security;
 
--- Anyone may read a verified resource. Unverified rows are invisible:
--- wrong hours are worse than no listing.
+-- Anyone may read a verified resource that carries every tag its category
+-- requires. Unverified rows are invisible, and so are incomplete ones: wrong
+-- hours are worse than no listing, and an untagged "fair chance employer" is
+-- worse than both.
 create policy resources_public_read on resources
   for select to anon
-  using (verified = true);
+  using (
+    verified = true
+    and (category <> 'fair-chance-jobs' or fair_chance_type is not null)
+    and (category <> 'docs-and-expungement' or service_provided is not null)
+  );
 
 -- Anyone may read an approved review. Pending and rejected notes never leave
 -- the database.

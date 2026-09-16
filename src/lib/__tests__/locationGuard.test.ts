@@ -27,6 +27,7 @@ const ALLOWED = new Map<string, string>([
   ['components/LocationBlock.tsx', 'the only component that renders a location'],
   ['screens/MapScreen.tsx', 'filters markers with canShowOnMap'],
   ['data/sampleResources.ts', 'placeholder data, gated like any other row'],
+  ['lib/searchArea.ts', "handles the READER'S own coordinates, never a Resource's"],
 ])
 
 /**
@@ -113,6 +114,18 @@ describe('location gate coverage', () => {
     // A gated resource must never reach the marker loop. Guard against
     // someone switching the filter for a CSS or opacity trick.
     expect(map).not.toMatch(/display:\s*['"]none['"].*marker/i)
+  })
+
+  it('keeps the reader-location module away from resource locations', () => {
+    // searchArea.ts is allowlisted because it reads the reader's own
+    // coordinates for a coverage check. That is only safe while it has
+    // nothing to do with Resource — otherwise the allowlist entry becomes a
+    // hole in the gate.
+    // Comments discuss the rule, so only the code is checked.
+    const area = stripComments(readFileSync(join(SRC, 'lib/searchArea.ts'), 'utf8'))
+    expect(area).not.toMatch(/\bResource\b/)
+    expect(area).not.toMatch(/from '\.\/types'/)
+    expect(area).not.toMatch(/canShowLocation/)
   })
 
   it('checks that LocationBlock returns before producing a directions link', () => {

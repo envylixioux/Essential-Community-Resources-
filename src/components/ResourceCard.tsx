@@ -4,6 +4,7 @@ import { resourceDescription, resourceName, type Locale } from '../lib/i18n'
 import type { Resource } from '../lib/types'
 import { CategoryChip } from './CategoryChip'
 import { OpenStatusBadge } from './OpenStatusBadge'
+import { FairChanceChip, ServiceChip } from './TagChip'
 
 export function ResourceCard({ resource, locale }: { resource: Resource; locale: Locale }) {
   const name = resourceName(resource, locale)
@@ -19,6 +20,13 @@ export function ResourceCard({ resource, locale }: { resource: Resource; locale:
         <h3>{name}</h3>
         <div className="card-meta">
           <CategoryChip category={resource.category} locale={locale} />
+          {/* What kind of front door this is, before anyone picks up a phone. */}
+          {resource.fair_chance_type ? (
+            <FairChanceChip type={resource.fair_chance_type} locale={locale} />
+          ) : null}
+          {resource.service_provided ? (
+            <ServiceChip service={resource.service_provided} locale={locale} />
+          ) : null}
           <OpenStatusBadge resource={resource} locale={locale} />
         </div>
         {neighborhood ? <p className="neighborhood">{neighborhood}</p> : null}

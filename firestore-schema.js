@@ -25,9 +25,37 @@ export const resources = {
   description: 'string',
   descriptionEs: 'string | null',
 
-  // Five categories, fixed. A person in a hurry can hold five options in
-  // their head; fifteen sends them scrolling.
-  category: "'food' | 'shelter' | 'documents' | 'employment' | 'crisis'",
+  // Six categories, fixed. A person in a hurry can hold six options in their
+  // head; fifteen sends them scrolling.
+  //
+  // Named for what someone would actually say they need. Nobody thinks "I
+  // need a shelter resource"; they think "I need somewhere to sleep
+  // tonight". The old names (food, shelter, documents, employment, crisis)
+  // are accepted for one release cycle by resolveCategory() and warn in the
+  // console.
+  //
+  // health-and-support is deliberately broader than the 'crisis' category it
+  // replaced: free clinics, mental health care and substance use support sit
+  // in it alongside crisis lines. Immediate danger is carried by the hotlines
+  // strip at the top of the home screen, which is never behind a filter.
+  category:
+    "'emergency-housing' | 'fair-chance-jobs' | 'docs-and-expungement' | " +
+    "'food-and-meals' | 'health-and-support' | 'clothing'",
+
+  // Required when category is 'fair-chance-jobs'. A listing without it does
+  // not render, in the app and in the RLS policy both.
+  //
+  // "Fair chance employer" is a claim about how someone will be treated when
+  // they disclose a record. Publishing that claim untagged means an applicant
+  // walks in on our say-so and gets rejected anyway. If we cannot say what
+  // kind of fair-chance resource it is, we do not list it.
+  fairChanceType:
+    "'signatory' | 'placement-program' | 'staffing-agency' | 'workforce-center' | null",
+
+  // Required when category is 'docs-and-expungement'. 'both' marks the
+  // organisations that handle ID and record work at one intake, which saves
+  // someone a second trip across the county.
+  serviceProvided: "'id-replacement' | 'expungement' | 'both' | null",
 
   // The field that drives most of the UI. It answers "what do I actually do
   // to get help here?", which is a different question from what the resource
