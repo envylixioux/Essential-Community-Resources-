@@ -96,6 +96,71 @@ for the two halves, multi-select with OR logic. Detail pages cross-link the
 other half, because clearing a record and replacing an ID usually go together
 and finding that out on a second trip wastes a day.
 
+## Call first, details on scroll
+
+One rule drives every screen: the action someone needs most is visible
+without scrolling. For nearly every resource that action is calling. Hours,
+eligibility and reviews are real and important, and they live below the fold.
+Nobody reads hours if they cannot find the phone number.
+
+### Resource card
+
+Category tag, name, open/closed, one line of context, then Call and Map.
+That is the whole card. The single eligibility tag on the meta line is chosen
+by `topEligibilityTag`, which puts restrictions ahead of conveniences:
+learning at the door that you needed a referral costs two bus rides, learning
+that it was also free costs nothing.
+
+The card body navigates to the detail page. The two buttons do their own
+thing and stop the tap from bubbling, so a thumb aimed at Call dials instead
+of navigating.
+
+### Resource detail
+
+Above the fold: category, name, rating, open/closed, Call and Map, and a
+scroll hint. Below it, in this order: address, hours, contact, what to know,
+referral notice, reviews, description, verification footer.
+
+The description is last on purpose. Most people came for the hours or the
+reviews, not a mission statement.
+
+The referral notice sits **below** the Call button, never above it. A
+referral requirement is not a reason to hide a phone number: calling to ask
+how to get the referral is exactly the right next step.
+
+The scroll hint only appears when there is actually something below the fold,
+and it fades with opacity rather than unmounting, so nothing shifts under a
+thumb that is already moving.
+
+### Shared components
+
+The card and the detail page render the same components, so an action learned
+on one screen is in the same place on the other.
+
+| Component | Does |
+| --- | --- |
+| `CategoryTag` | The coloured chip, always with its written name |
+| `OpenClosedStatus` | "Open now · closes 5:00pm", in Los Angeles time |
+| `ActionButtons` | Call and Map, or full-width "Call now" when gated |
+| `ReferralNotice` | The bordered callout below the Call button |
+| `ReviewList` | Approved reviews and the submission form |
+| `VerificationFooter` | "Last verified", plus the staleness warning |
+| `ScrollHint` | The fading "scroll for more" line |
+
+### Colours
+
+`src/lib/categoryColors.ts` holds one light tint and one dark ink per
+category, used by the chip, the Call button, the eligibility tags, today's
+hours row and the map pins. Someone learns the coding once and it holds
+everywhere.
+
+All nine pairs were checked against WCAG AA for normal text; the weakest is
+4.78:1. **If you change a value, re-check the contrast.** The accessibility
+floor outranks the palette.
+
+Colour never carries meaning alone. Every chip, tile, button and pin that
+uses these also spells out its category in words.
+
 ## Home screen
 
 Four things stack above the resource list, in this order:
@@ -151,6 +216,15 @@ to the reader.
 ## Deliberately not built
 
 These were considered and rejected. Do not add them.
+
+- **A save or bookmark feature.** It implies an account, and it promises a
+  persistence that `localStorage` cannot keep on a shared or wiped phone.
+- **A custom share UI.** The browser's own share sheet knows every app the
+  reader has; a home-grown one knows none of them. The detail page shows a
+  share button only where `navigator.share` exists, and nothing where it
+  does not.
+- **Swipe gestures on cards.** Swipe-to-call is discoverable only by someone
+  who already knows it exists. Tap targets win for hurried, stressed people.
 
 - **A chatbot as a primary interface.** Every resource here is human-verified.
   An AI answering freehand can invent an address, misstate hours, or describe
@@ -310,6 +384,10 @@ a real phone and confirm by hand:
   hide it from the list.
 - A `fair-chance-jobs` row with no `fair_chance_type` does not appear, and is
   not reachable by typing its URL directly.
+- On a confidential resource, both the card and the detail page show a
+  full-width "Call now" and no Map button at all.
+- Tapping Call on a card dials instead of opening the detail page.
+- A pending review never renders.
 - The language toggle changes every screen, and a resource with no Spanish
   name still shows its English name rather than a blank.
 - The whole app is usable one-handed at 320px.

@@ -23,6 +23,13 @@ interface AppState {
   /** Where the reader is searching. Opt-in, remembered in their browser. */
   area: SearchArea
   setArea: (area: SearchArea) => void
+  /**
+   * The reader's coordinates, if they pressed auto-detect this visit. Held in
+   * memory only and deliberately never persisted: it powers the distance on a
+   * card and is gone when the tab closes.
+   */
+  position: { lat: number; lng: number } | null
+  setPosition: (position: { lat: number; lng: number } | null) => void
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -47,6 +54,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const [attempt, setAttempt] = useState(0)
   const [area, setAreaState] = useState<SearchArea>(loadSearchArea)
+
+  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null)
 
   const setArea = useCallback((next: SearchArea) => {
     setAreaState(next)
@@ -94,8 +103,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const reload = useCallback(() => setAttempt((n) => n + 1), [])
 
   const value = useMemo<AppState>(
-    () => ({ locale, setLocale, resources, isSample, loading, error, reload, area, setArea }),
-    [locale, setLocale, resources, isSample, loading, error, reload, area, setArea],
+    () => ({
+      locale, setLocale, resources, isSample, loading, error, reload,
+      area, setArea, position, setPosition,
+    }),
+    [locale, setLocale, resources, isSample, loading, error, reload, area, setArea, position],
   )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

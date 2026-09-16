@@ -2,32 +2,28 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { CategoryChip } from '../components/CategoryChip'
+import { CategoryTag } from '../components/CategoryTag'
 import { MapSkeleton } from '../components/Skeletons'
 import { useApp } from '../lib/AppContext'
 import { canShowOnMap } from '../lib/canShowLocation'
 import { formatMiles, haversineMiles } from '../lib/distance'
 import { resourceName, t } from '../lib/i18n'
-import { CATEGORIES } from '../lib/types'
+import { CATEGORY_COLORS } from '../lib/categoryColors'
+import { CATEGORIES, type Category } from '../lib/types'
 
 const LA_CENTER: [number, number] = [34.0522, -118.2437]
 
-// Matches the chip and tile palette so the colour coding is learned once and
-// holds everywhere. Colour never carries the meaning on its own: the legend
-// below the map spells out every category, as do the popups.
-const PIN_COLORS: Record<string, string> = {
-  'food-and-meals': '#7a4a00',
-  'emergency-housing': '#1f4d7a',
-  'docs-and-expungement': '#4a2f7a',
-  'fair-chance-jobs': '#14622f',
-  'health-and-support': '#8a1f3d',
-  clothing: '#0f5c66',
-}
-
-function pinIcon(category: string) {
+/**
+ * Pins take the ink from the shared category palette, so the colour coding a
+ * reader learned from the chips holds on the map too. Colour never carries
+ * the meaning alone: the legend under the map spells out every category and
+ * each popup names its own.
+ */
+function pinIcon(category: Category) {
+  const colour = CATEGORY_COLORS[category].ink
   return L.divIcon({
     className: '',
-    html: `<span class="map-pin" style="background:${PIN_COLORS[category] ?? '#1b3a5c'}"></span>`,
+    html: `<span class="map-pin" style="background:${colour}"></span>`,
     iconSize: [20, 20],
     iconAnchor: [10, 20],
   })
@@ -149,7 +145,7 @@ export default function MapScreen() {
       <ul className="legend">
         {CATEGORIES.map((category) => (
           <li key={category}>
-            <CategoryChip category={category} locale={locale} />
+            <CategoryTag category={category} locale={locale} />
           </li>
         ))}
       </ul>
@@ -163,7 +159,7 @@ export default function MapScreen() {
                 <Link className="card-link" to={`/resource/${resource.id}`}>
                   <h3>{resourceName(resource, locale)}</h3>
                   <div className="card-meta">
-                    <CategoryChip category={resource.category} locale={locale} />
+                    <CategoryTag category={resource.category} locale={locale} />
                     <span className="neighborhood">{formatMiles(miles, locale)}</span>
                   </div>
                 </Link>

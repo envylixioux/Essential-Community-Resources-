@@ -65,6 +65,9 @@ const STRINGS: Dictionary = {
   'food-and-meals': { en: 'Food & Meals', es: 'Comida y comidas' },
   'health-and-support': { en: 'Health & Support', es: 'Salud y apoyo' },
   clothing: { en: 'Clothing', es: 'Ropa' },
+  'mobile-services': { en: 'Mobile services', es: 'Servicios móviles' },
+  'family-support': { en: 'Family support', es: 'Apoyo familiar' },
+  'faith-based': { en: 'Faith-based', es: 'Basado en la fe' },
 
   // Short forms for the Quick Finder tiles, where space is tight.
   'tile.emergency-housing': { en: 'Emergency Housing', es: 'Vivienda de emergencia' },
@@ -75,6 +78,73 @@ const STRINGS: Dictionary = {
   'tile.clothing': { en: 'Clothing', es: 'Ropa' },
 
   quickFinder: { en: 'What do you need?', es: '¿Qué necesita?' },
+
+  // --- Card and detail actions ---
+  callNow: { en: 'Call now', es: 'Llamar ahora' },
+  mapButton: { en: 'Map', es: 'Mapa' },
+  closesAtShort: { en: 'closes {time}', es: 'cierra a las {time}' },
+  opensAtShort: { en: 'opens {time}', es: 'abre a las {time}' },
+  opensAtOnDay: { en: 'opens {time} {day}', es: 'abre a las {time} {day}' },
+  locationPrivateShort: {
+    en: 'Location kept private for safety',
+    es: 'Ubicación privada por seguridad',
+  },
+  share: { en: 'Share', es: 'Compartir' },
+  scrollHint: {
+    en: 'Scroll for hours, reviews & more',
+    es: 'Desplaza para ver horarios, reseñas y más',
+  },
+
+  // --- Eligibility tags ---
+  'tag.referral-needed': { en: 'Referral needed', es: 'Se necesita referencia' },
+  'tag.women-only': { en: 'Women only', es: 'Solo mujeres' },
+  'tag.no-id-needed': { en: 'No ID needed', es: 'Sin identificación' },
+  'tag.walk-ins-welcome': { en: 'Walk-ins welcome', es: 'Sin cita' },
+  'tag.free': { en: 'Free', es: 'Gratis' },
+
+  // --- Detail sections ---
+  address: { en: 'Address', es: 'Dirección' },
+  contact: { en: 'Contact', es: 'Contacto' },
+  whatToKnow: { en: 'What to know', es: 'Lo que debe saber' },
+  about: { en: 'About', es: 'Acerca de' },
+  cost: { en: 'Cost', es: 'Costo' },
+  wheelchair: { en: 'Wheelchair accessible', es: 'Accesible en silla de ruedas' },
+  yes: { en: 'Yes', es: 'Sí' },
+  no: { en: 'No', es: 'No' },
+  open24Full: { en: 'Open 24 hours, 7 days a week', es: 'Abierto 24 horas, 7 días a la semana' },
+  referralRequired: { en: 'A referral is needed', es: 'Se necesita una referencia' },
+  referralDefault: {
+    en: 'Call to ask how to get a referral before you go.',
+    es: 'Llame para preguntar cómo obtener una referencia antes de ir.',
+  },
+  lastVerified: { en: 'Last verified {date}.', es: 'Verificado por última vez el {date}.' },
+  lastVerifiedBy: {
+    en: 'Last verified {date} by {method}.',
+    es: 'Verificado por última vez el {date} por {method}.',
+  },
+  mayBeOutdated: {
+    en: 'This listing may be outdated. Call to confirm.',
+    es: 'Esta información puede estar desactualizada. Llame para confirmar.',
+  },
+
+  // --- Reviews ---
+  ratingSummary: { en: '{rating} stars · {count} reviews', es: '{rating} estrellas · {count} reseñas' },
+  starsOutOfFive: { en: '{rating} out of 5 stars', es: '{rating} de 5 estrellas' },
+  showAllReviews: { en: 'Show all {count} reviews', es: 'Ver las {count} reseñas' },
+  addReview: { en: 'Add your review', es: 'Añadir su reseña' },
+  yourRating: { en: 'Your rating', es: 'Su calificación' },
+  yourReview: { en: 'Your review', es: 'Su reseña' },
+  ratingRequired: { en: 'Choose a star rating.', es: 'Elija una calificación.' },
+  charactersLeft: { en: '{count} characters left', es: 'Quedan {count} caracteres' },
+  submitReview: { en: 'Submit review', es: 'Enviar reseña' },
+  reviewThanks: {
+    en: "Thanks. Your review will appear after it's reviewed.",
+    es: 'Gracias. Su reseña aparecerá después de ser revisada.',
+  },
+  reviewSafetyNote: {
+    en: "Please don't include staff names or the address of any location that keeps its address private.",
+    es: 'Por favor no incluya nombres del personal ni la dirección de ningún lugar que mantenga su dirección privada.',
+  },
 
   // Fair chance types. A person deserves to know which front door they are
   // calling before they call it.
@@ -198,8 +268,8 @@ const STRINGS: Dictionary = {
   eligibility: { en: 'Who can use this', es: 'Quién puede usarlo' },
   languages: { en: 'Languages', es: 'Idiomas' },
   hours: { en: 'Hours', es: 'Horario' },
-  reviews: { en: 'Community notes', es: 'Notas de la comunidad' },
-  noReviews: { en: 'No community notes yet.', es: 'Aún no hay notas de la comunidad.' },
+  reviews: { en: 'Reviews', es: 'Reseñas' },
+  noReviews: { en: 'No reviews yet.', es: 'Aún no hay reseñas.' },
   back: { en: 'Back', es: 'Atrás' },
   viewDetails: { en: 'View details', es: 'Ver detalles' },
   home: { en: 'Home', es: 'Inicio' },

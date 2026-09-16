@@ -1,8 +1,9 @@
 import { SAMPLE_RESOURCES } from '../data/sampleResources'
+import { SAMPLE_REVIEWS } from '../data/sampleReviews'
 import { canShowLocation, redactLocation } from './canShowLocation'
 import { hasRequiredTags, missingTagReason } from './categories'
 import { supabase } from './supabase'
-import type { Resource, Review, Submission } from './types'
+import type { Resource, Review, ReviewDraft, Submission } from './types'
 
 export interface ResourceLoad {
   resources: Resource[]
@@ -78,7 +79,11 @@ function postalCodeOf(resource: Resource): string | null {
 
 /** Approved reviews only. Pending and rejected notes never reach the UI. */
 export async function loadReviews(resourceId: string): Promise<Review[]> {
-  if (!supabase) return []
+  if (!supabase) {
+    return SAMPLE_REVIEWS.filter(
+      (review) => review.resource_id === resourceId && review.status === 'approved',
+    )
+  }
 
   const { data, error } = await supabase
     .from('reviews')
@@ -89,6 +94,20 @@ export async function loadReviews(resourceId: string): Promise<Review[]> {
 
   if (error) throw new Error(error.message)
   return (data ?? []) as Review[]
+}
+
+/**
+ * Files a review. It lands as 'pending' and a person reads it before it
+ * appears. A public directory for people in a vulnerable spot cannot carry an
+ * unmoderated comment field.
+ */
+export async function submitReview(draft: ReviewDraft): Promise<void> {
+  if (!supabase) {
+    throw new Error('Reviews are not available in this build.')
+  }
+
+  const { error } = await supabase.from('reviews').insert({ ...draft, status: 'pending' })
+  if (error) throw new Error(error.message)
 }
 
 /**

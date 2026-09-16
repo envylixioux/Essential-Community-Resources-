@@ -1,3 +1,4 @@
+import { haversineMiles } from './distance'
 import type { Resource } from './types'
 
 /**
@@ -79,6 +80,23 @@ export function redactLocation(resource: Resource): Resource {
     latitude: null,
     longitude: null,
   }
+}
+
+/**
+ * Distance in miles from a point to this resource, or null when the gate
+ * refuses it or it has no coordinates.
+ *
+ * Callers get a number and never touch the coordinates themselves, so a
+ * gated resource cannot leak a position through a distance calculation and
+ * no screen needs to reach for latitude or longitude to show "1.2 mi".
+ */
+export function distanceMilesFrom(
+  resource: Resource,
+  fromLat: number,
+  fromLng: number,
+): number | null {
+  if (!canShowOnMap(resource)) return null
+  return haversineMiles(fromLat, fromLng, resource.latitude, resource.longitude)
 }
 
 /**

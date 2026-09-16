@@ -4,6 +4,7 @@ import {
   COUNTY_AREA,
   isLaCountyZip,
   isPositionInLaCounty,
+  positionToLatLng,
   type SearchArea,
 } from '../lib/searchArea'
 import type { Resource } from '../lib/types'
@@ -25,12 +26,15 @@ export function areaLabel(area: SearchArea, locale: Locale): string {
 export function LocationIndicator({
   area,
   onChange,
+  onPosition,
   resources,
   locale,
   openSignal,
 }: {
   area: SearchArea
   onChange: (area: SearchArea) => void
+  /** Called with the reader's coordinates when they auto-detect. */
+  onPosition?: (position: { lat: number; lng: number }) => void
   resources: Resource[]
   locale: Locale
   /** Incrementing this opens the modal from elsewhere, e.g. the empty state. */
@@ -66,6 +70,7 @@ export function LocationIndicator({
       {open ? (
         <ChangeAreaModal
           locale={locale}
+          onPosition={onPosition}
           onClose={() => setOpen(false)}
           onPick={(next) => {
             onChange(next)
@@ -81,10 +86,12 @@ function ChangeAreaModal({
   locale,
   onClose,
   onPick,
+  onPosition,
 }: {
   locale: Locale
   onClose: () => void
   onPick: (area: SearchArea) => void
+  onPosition?: (position: { lat: number; lng: number }) => void
 }) {
   const [zip, setZip] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -119,6 +126,9 @@ function ChangeAreaModal({
           setError(t('outsideCoverage', locale))
           return
         }
+        // Kept in memory for this visit so cards can show a distance. Never
+        // written to storage and never sent anywhere.
+        onPosition?.(positionToLatLng(result))
         onPick({ kind: 'county' })
       },
       () => {

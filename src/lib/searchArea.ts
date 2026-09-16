@@ -89,6 +89,12 @@ export function isPositionInLaCounty(position: GeolocationPosition): boolean {
   return isInLaCounty(position.coords.latitude, position.coords.longitude)
 }
 
+/** The reader's own coordinates as a plain pair, so components never unpack
+ * a GeolocationPosition themselves. In memory for the visit, never stored. */
+export function positionToLatLng(position: GeolocationPosition): { lat: number; lng: number } {
+  return { lat: position.coords.latitude, lng: position.coords.longitude }
+}
+
 export function isInLaCounty(latitude: number, longitude: number): boolean {
   return (
     latitude >= LA_COUNTY_BOUNDS.south &&

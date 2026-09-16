@@ -225,82 +225,71 @@ a {
   gap: 12px;
 }
 
+/*
+ * Action-first card. Category, name, open/closed, one line of context, then
+ * Call and Map. Everything else is on the detail page: nobody reads hours if
+ * they cannot find the phone number.
+ */
+
 .card {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--page);
 }
 
-.card-link {
-  display: block;
+.card-body {
   padding: 14px;
-  min-height: var(--tap);
+  cursor: pointer;
+}
+
+.card-title {
+  margin: 8px 0 2px;
+  font-size: 1.125rem; /* 18px */
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.card-title a {
+  color: var(--ink);
   text-decoration: none;
-  color: inherit;
-}
-
-.card h3 {
-  margin: 0 0 4px;
-  font-size: 1.0625rem;
-  line-height: 1.35;
-}
-
-.card p {
-  margin: 6px 0 0;
-  color: var(--ink-soft);
-}
-
-.card-meta {
+  /* The card body is tappable across its whole area, but this anchor is a
+     target in its own right for keyboard and assistive technology, so it
+     meets the 44px floor by itself. */
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   align-items: center;
-  margin-top: 8px;
+  min-height: 44px;
 }
 
-/* Category chips pair a colour with the category name, always. Colour alone
-   never carries the meaning. */
-.chip {
+.card-title a:hover,
+.card-title a:focus-visible {
+  text-decoration: underline;
+}
+
+/* Category chip: light tint, dark ink, always with its written name. */
+.category-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   border-radius: 999px;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--brand-ink);
+  background: var(--cat-bg);
+  color: var(--cat-ink);
+  border: 1px solid var(--cat-border);
 }
 
-.chip-food-and-meals { background: var(--cat-food-and-meals); }
-.chip-emergency-housing { background: var(--cat-emergency-housing); }
-.chip-docs-and-expungement { background: var(--cat-docs-and-expungement); }
-.chip-fair-chance-jobs { background: var(--cat-fair-chance-jobs); }
-.chip-health-and-support { background: var(--cat-health-and-support); }
-.chip-clothing { background: var(--cat-clothing); }
-
-.status {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-size: 1rem;
-  font-weight: 600;
+.status-line {
+  margin: 2px 0;
+  font-size: 1rem; /* the spec's 15px, raised to the 16px floor */
+  font-weight: 500;
 }
 
 .status-open { color: var(--open); }
-.status-closed { color: var(--closed); }
-.status-unknown { color: var(--unknown); }
+.status-closed { color: var(--ink-soft); }
 
-.status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: currentColor;
-  flex: 0 0 auto;
-}
-
-.neighborhood {
-  font-size: 1rem;
+.meta-line {
+  margin: 2px 0 0;
+  font-size: 1rem; /* the spec's 14px, raised to the 16px floor */
   color: var(--ink-soft);
 }
 
@@ -924,4 +913,305 @@ a {
   width: 100%;
   flex: none;
   margin-top: 8px;
+}
+
+
+/* ---- Action buttons ------------------------------------------------------ */
+/*
+ * Call and Map. Identical on the card and the detail page so the action
+ * someone learned in one place is in the same place in the other. Only the
+ * height differs: the detail page is the primary action and gets more thumb.
+ */
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.action {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.actions-card .action { min-height: 48px; }
+.actions-detail .action { min-height: 52px; }
+
+.action-call {
+  background: var(--cat-bg);
+  border: 1px solid var(--cat-border);
+  color: var(--cat-ink);
+}
+
+.action-map {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+/* No Map button to sit beside, so Call takes the whole width. */
+.action-full { flex-basis: 100%; }
+
+/* ---- Detail page --------------------------------------------------------- */
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* The arrow glyph is small; its tap target is not. */
+.back-link,
+.share-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 8px;
+}
+
+.share-button {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1.125rem;
+}
+
+.detail-title {
+  margin: 8px 0 4px;
+  font-size: 1.375rem; /* 22px */
+  line-height: 1.25;
+}
+
+.rating-line {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: var(--ink-soft);
+}
+
+.scroll-hint {
+  margin: 14px 0 0;
+  font-size: 1rem;
+  color: var(--ink-soft);
+  text-align: center;
+  /* Opacity rather than display, so nothing shifts under a moving thumb. */
+  opacity: 0;
+  transition: opacity 240ms ease;
+  pointer-events: none;
+}
+
+.scroll-hint-visible { opacity: 1; }
+
+.detail-section {
+  margin: 24px 0;
+}
+
+.section-label {
+  font-size: 1rem;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.muted { color: var(--ink-soft); }
+
+.address-link,
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--cat-ink);
+  font-weight: 500;
+}
+
+.contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Today's row is tinted with the category colour and also bolded, so the
+   highlight does not depend on seeing the tint. */
+.hours-table tr.today th,
+.hours-table tr.today td {
+  font-weight: 700;
+  background: var(--cat-bg);
+  color: var(--cat-ink);
+}
+
+.hours-note {
+  margin-top: 8px;
+  color: var(--ink-soft);
+}
+
+.serves-population {
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.eligibility-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.eligibility-tag {
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  background: var(--cat-bg);
+  color: var(--cat-ink);
+  border: 1px solid var(--cat-border);
+  font-size: 1rem;
+}
+
+.fact-list {
+  margin: 12px 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+}
+
+.fact-list dt {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.fact-list dd { margin: 0; }
+
+/* ---- Referral notice ------------------------------------------------------ */
+/* Sits below the Call button on purpose: calling to ask how to get the
+   referral is exactly the right next step. */
+
+.referral-notice {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin: 20px 0;
+}
+
+.referral-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+
+.referral-notice p:last-child { margin-bottom: 0; }
+
+/* ---- Reviews -------------------------------------------------------------- */
+
+.review-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.review {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+
+.stars { color: #9a6700; font-size: 1.0625rem; letter-spacing: 1px; }
+
+.review-body { margin: 6px 0 4px; }
+
+.review-date { margin: 0; font-size: 1rem; color: var(--ink-soft); }
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  min-height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.review-form { margin-top: 12px; }
+
+.rating-field { border: none; margin: 0 0 12px; padding: 0; }
+
+.rating-field legend { font-weight: 600; padding: 0; }
+
+.rating-buttons { display: flex; gap: 4px; }
+
+.rating-button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: #9a6700;
+  cursor: pointer;
+}
+
+.rating-button[aria-pressed='true'] { border-color: var(--brand); }
+
+.review-safety-note {
+  border-left: 3px solid var(--line);
+  padding-left: 10px;
+  margin: 12px 0;
+}
+
+/* ---- Verification footer -------------------------------------------------- */
+
+.verification {
+  margin: 28px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.verification p { margin: 0 0 4px; }
+
+.verification-stale {
+  color: var(--closed);
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  /*
+   * The category tints are light by design. In dark mode the ink becomes the
+   * surface and the tint becomes the text, which keeps each category's hue
+   * recognisable without a glowing white block on a dark page.
+   */
+  .category-tag,
+  .action-call,
+  .eligibility-tag,
+  .hours-table tr.today th,
+  .hours-table tr.today td {
+    background: color-mix(in srgb, var(--cat-bg) 18%, #10171e);
+    color: var(--cat-bg);
+    border-color: color-mix(in srgb, var(--cat-bg) 40%, #10171e);
+  }
+
+  .address-link,
+  .contact-link { color: var(--brand); }
+
+  .stars, .rating-button { color: #e8c35a; }
 }

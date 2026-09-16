@@ -38,6 +38,8 @@ export interface OpenStatus {
   opensAt: string | null
   /** True when opensAt refers to a later day rather than today. */
   opensNextDay: boolean
+  /** The weekday opensAt falls on, so the card can say "opens 8:00am Monday". */
+  opensOnWeekday: Weekday | null
 }
 
 interface LaNow {
@@ -120,6 +122,7 @@ const UNKNOWN: OpenStatus = {
   closesAt: null,
   opensAt: null,
   opensNextDay: false,
+  opensOnWeekday: null,
 }
 
 /**
@@ -155,6 +158,7 @@ export function getOpenStatus(
           closesAt: formatTime(bounds.close),
           opensAt: null,
           opensNextDay: false,
+          opensOnWeekday: null,
         }
       }
     }
@@ -185,6 +189,7 @@ export function getOpenStatus(
           closesAt: formatTime(close),
           opensAt: null,
           opensNextDay: false,
+          opensOnWeekday: null,
         }
       }
     } else if (minutes >= open && minutes < close) {
@@ -194,6 +199,7 @@ export function getOpenStatus(
         closesAt: formatTime(close),
         opensAt: null,
         opensNextDay: false,
+        opensOnWeekday: null,
       }
     }
 
@@ -204,7 +210,14 @@ export function getOpenStatus(
 
   // An explicit empty array means "closed today" — that is knowledge, not a gap.
   if (today.length === 0) {
-    return { ...UNKNOWN, state: 'closed', opensAt: nextOpening(hours, weekday) }
+    const next = nextOpening(hours, weekday)
+    return {
+      ...UNKNOWN,
+      state: 'closed',
+      opensAt: next?.time ?? null,
+      opensNextDay: true,
+      opensOnWeekday: next?.weekday ?? null,
+    }
   }
 
   if (!sawUsableRange) return UNKNOWN
@@ -216,28 +229,41 @@ export function getOpenStatus(
       closesAt: null,
       opensAt: formatTime(nextOpenToday),
       opensNextDay: false,
+      opensOnWeekday: WEEKDAYS[weekday],
     }
   }
 
+  const next = nextOpening(hours, weekday)
   return {
     state: 'closed',
     alwaysOpen: false,
     closesAt: null,
-    opensAt: nextOpening(hours, weekday),
+    opensAt: next?.time ?? null,
     opensNextDay: true,
+    opensOnWeekday: next?.weekday ?? null,
   }
 }
 
-/** Earliest opening time on the next day that has one, within a week. */
-function nextOpening(hours: Hours, fromWeekday: number): string | null {
+/**
+ * Earliest opening on the next day that has one, within a week, with the day
+ * it falls on so the caller can say "opens 8:00am Monday" rather than leaving
+ * someone to work out which day that is.
+ */
+function nextOpening(
+  hours: Hours,
+  fromWeekday: number,
+): { time: string; weekday: Weekday } | null {
   for (let offset = 1; offset <= 7; offset += 1) {
-    const ranges = rangesFor(hours, fromWeekday + offset)
+    const index = ((fromWeekday + offset) % 7 + 7) % 7
+    const ranges = rangesFor(hours, index)
     if (!ranges || ranges.length === 0) continue
     const opens = ranges
       .map(rangeBounds)
       .filter((b): b is { open: number; close: number } => b !== null)
       .map((b) => b.open)
-    if (opens.length > 0) return formatTime(Math.min(...opens))
+    if (opens.length > 0) {
+      return { time: formatTime(Math.min(...opens)), weekday: WEEKDAYS[index] }
+    }
   }
   return null
 }

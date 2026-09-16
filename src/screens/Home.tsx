@@ -7,13 +7,15 @@ import { ResourceCard } from '../components/ResourceCard'
 import { ResourceListSkeleton } from '../components/Skeletons'
 import { useApp } from '../lib/AppContext'
 import { resourceDescription, resourceName, t } from '../lib/i18n'
+import { distanceMilesFrom } from '../lib/canShowLocation'
 import { CATEGORIES, type Category, type Resource, type ServiceProvided } from '../lib/types'
 
 /** The two halves of docs-and-expungement, as a secondary multi-select. */
 const DOC_SERVICES: ServiceProvided[] = ['id-replacement', 'expungement']
 
 export default function Home() {
-  const { locale, resources, loading, error, reload, isSample, area, setArea } = useApp()
+  const { locale, resources, loading, error, reload, isSample, area, setArea, position, setPosition } =
+    useApp()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<Category | 'all'>('all')
   const [services, setServices] = useState<ServiceProvided[]>([])
@@ -86,6 +88,7 @@ export default function Home() {
       <LocationIndicator
         area={area}
         onChange={setArea}
+        onPosition={setPosition}
         resources={inArea}
         locale={locale}
         openSignal={openAreaModal}
@@ -181,7 +184,16 @@ export default function Home() {
             ) : (
               <ul className="resource-list">
                 {filtered.map((resource) => (
-                  <ResourceCard key={resource.id} resource={resource} locale={locale} />
+                  <ResourceCard
+                    key={resource.id}
+                    resource={resource}
+                    locale={locale}
+                    distanceMiles={
+                      position
+                        ? distanceMilesFrom(resource, position.lat, position.lng) ?? undefined
+                        : undefined
+                    }
+                  />
                 ))}
               </ul>
             )}

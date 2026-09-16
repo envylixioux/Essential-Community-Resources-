@@ -18,7 +18,18 @@ create type resource_category as enum (
   'docs-and-expungement',
   'food-and-meals',
   'health-and-support',
-  'clothing'
+  'clothing',
+  'mobile-services',
+  'family-support',
+  -- Tagged rather than folded into the others: some people are looking for a
+  -- congregation and some are avoiding one. Both deserve to know first.
+  'faith-based'
+);
+
+-- A short fixed vocabulary so both languages are written once and the card
+-- can show the single most useful one.
+create type eligibility_tag as enum (
+  'referral-needed', 'women-only', 'no-id-needed', 'walk-ins-welcome', 'free'
 );
 
 -- What kind of fair-chance resource this is. A workforce center serves
@@ -68,16 +79,35 @@ create table resources (
   phone text,
   hotline text,
   website text,
+  email text,
 
   -- { "monday": [{ "open": "09:00", "close": "17:00" }], ... }
   -- A missing weekday key means "unknown". An empty array means "closed".
   -- A range whose close is earlier than its open runs overnight.
   hours jsonb,
   open_24_hours boolean not null default false,
+  hours_note text,
+  hours_note_es text,
 
   eligibility text,
   eligibility_es text,
+  eligibility_tags eligibility_tag[],
   languages text[],
+  cost text,
+  cost_es text,
+
+  -- Three-state on purpose: null means we have not asked, which is not the
+  -- same as "no". The UI shows this only when we actually know.
+  wheelchair_accessible boolean,
+
+  serves_population text,
+  serves_population_es text,
+
+  -- Never hides the phone number. The notice sits below the Call button,
+  -- because calling to ask how to get a referral is the right next step.
+  referral_required boolean not null default false,
+  referral_note text,
+  referral_note_es text,
 
   -- Required for their own categories; see the check constraints below.
   fair_chance_type fair_chance_type,
@@ -86,6 +116,9 @@ create table resources (
   -- Nothing renders until a person has called and confirmed the details.
   verified boolean not null default false,
   last_verified_at date,
+  -- How it was confirmed: 'phone call', 'site visit', 'staff email'. Shown to
+  -- the reader so they can judge how much to trust the hours above it.
+  verification_method text,
 
   created_at timestamptz not null default now(),
 

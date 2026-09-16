@@ -1,5 +1,5 @@
 import { t, type Locale } from '../lib/i18n'
-import { CATEGORIES, type Category } from '../lib/types'
+import { TILE_CATEGORIES, type Category } from '../lib/types'
 
 /**
  * A tile grid above the resource list: a second door into the same data,
@@ -14,7 +14,7 @@ import { CATEGORIES, type Category } from '../lib/types'
  * everywhere else in the app.
  */
 
-const TILE_EMOJI: Record<Category, string> = {
+const TILE_EMOJI: Partial<Record<Category, string>> = {
   'emergency-housing': '🏠',
   'fair-chance-jobs': '💼',
   'docs-and-expungement': '🪪',
@@ -38,7 +38,7 @@ export function QuickFinder({
         {t('quickFinder', locale)}
       </h2>
       <ul className="tiles">
-        {CATEGORIES.map((category) => (
+        {TILE_CATEGORIES.map((category) => (
           <li key={category}>
             <button
               type="button"

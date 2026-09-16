@@ -161,6 +161,41 @@ describe('getOpenStatus — split ranges', () => {
   })
 })
 
+describe('getOpenStatus — naming the next open day', () => {
+  const resource = { hours: weekdayNineToFive, open_24_hours: false }
+
+  it('names today when the resource opens again later today', () => {
+    const status = getOpenStatus(resource, at('2024-01-10T16:00:00Z')) // Wed 08:00 PST
+    expect(status.opensOnWeekday).toBe('wednesday')
+    expect(status.opensNextDay).toBe(false)
+  })
+
+  it('names tomorrow once today is over', () => {
+    const status = getOpenStatus(resource, at('2024-01-11T04:00:00Z')) // Wed 20:00 PST
+    expect(status.opensAt).toBe('09:00')
+    expect(status.opensOnWeekday).toBe('thursday')
+    expect(status.opensNextDay).toBe(true)
+  })
+
+  it('skips closed days to name the next one that opens', () => {
+    // Saturday 12:00 PST — Sunday is closed, so Monday is the answer.
+    const status = getOpenStatus(resource, at('2024-01-13T20:00:00Z'))
+    expect(status.opensOnWeekday).toBe('monday')
+  })
+
+  it('wraps around the end of the week', () => {
+    const fridayOnly: Hours = {
+      sunday: [], monday: [], tuesday: [], wednesday: [], thursday: [],
+      friday: [{ open: '10:00', close: '14:00' }],
+      saturday: [],
+    }
+    // Saturday 12:00 PST — the next opening is the following Friday.
+    const status = getOpenStatus({ hours: fridayOnly, open_24_hours: false }, at('2024-01-13T20:00:00Z'))
+    expect(status.opensOnWeekday).toBe('friday')
+    expect(status.opensAt).toBe('10:00')
+  })
+})
+
 describe('getOpenStatus — 24 hours and missing data', () => {
   it('reports open for open_24_hours regardless of the hours JSON', () => {
     const status = getOpenStatus({ hours: null, open_24_hours: true }, at('2024-01-11T11:00:00Z'))
