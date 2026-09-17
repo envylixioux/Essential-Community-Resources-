@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Single page app: every path has to serve index.html or a refresh on
+# /map returns a 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    # Do not leak which resource someone was looking at to any site they
+    # navigate to next.
+    Referrer-Policy = "no-referrer"
