@@ -1,4 +1,4 @@
-# Quick Connect LA
+# Connect LA
 
 Food, shelter, ID and document help, employment services, and crisis support
 across Los Angeles County — in one place anyone can reach by scanning a QR
